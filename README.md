@@ -10,3 +10,9 @@ and pricing.
 ## Usage
 
 ## Reference
+
+The `py3dbp` bin packing package is from
+
+```https://pypi.org/project/py3dbp/```
+
+```https://github.com/bom-d-van/binpacking```

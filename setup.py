@@ -10,7 +10,10 @@ setup(
     version=__version__,
     author='Jarod Hart & Robert Goss',
     author_email='jhart@yat.ai',
-    packages=['ytl', 'ytl.py3dbp', 'ytl.services'],
+    packages=[
+        'ytl', 'ytl.py3dbp', 'ytl.services',
+        'ytl.optimizer_functions','ytl.optimizer_functions.shipment_arrangement','ytl.optimizer_functions.piece_arrangement',
+    ],
     license="Copyright YAT",
     install_requires=install_requires,
     test_suite="tests",

@@ -1,6 +1,4 @@
 
-# https://cerasis.com/wp-content/uploads/2015/08/2015TrailerGuide.pdf
-
 STANDARD_TRAILER_DIMS = [
     {
         'name': "Standard 53' Dry-Van",
@@ -164,7 +162,7 @@ STANDARD_TRAILER_DIMS = [
         'outer_height': None,
         'outer_length': 26 * 12,
         'inner_width': 96,
-        'inner_height': None,
+        'inner_height': 102,
         'inner_length': 26 * 12,
         'door_width': None,
         'door_height': None,
@@ -177,7 +175,7 @@ STANDARD_TRAILER_DIMS = [
         'outer_height': None,
         'outer_length': 40 * 12,
         'inner_width': 96,
-        'inner_height': None,
+        'inner_height': 102,
         'inner_length': 40 * 12,
         'door_width': None,
         'door_height': None,
@@ -190,7 +188,7 @@ STANDARD_TRAILER_DIMS = [
         'outer_height': None,
         'outer_length': 45 * 12,
         'inner_width': 102,
-        'inner_height': None,
+        'inner_height': 102,
         'inner_length': 45 * 12,
         'door_width': None,
         'door_height': None,
@@ -203,7 +201,7 @@ STANDARD_TRAILER_DIMS = [
         'outer_height': None,
         'outer_length': 48 * 12,
         'inner_width': 102,
-        'inner_height': None,
+        'inner_height': 102,
         'inner_length': 48 * 12,
         'door_width': None,
         'door_height': None,

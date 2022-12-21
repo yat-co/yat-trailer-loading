@@ -5,21 +5,21 @@ import numpy as np
 import time
 
 
-def generate_random_piece(blockout):
+def generate_random_piece(blockout,single_piece_only=True):
     return {
-        'length': np.random.choice(a=[i for i in range(blockout, 60, 1) if i >= 14]),
-        'width': np.random.choice(a=[i for i in range(blockout, 60, 1) if i >= 14]),
-        'height': np.random.choice(a=list(range(24, 48))),
+        'length': np.random.choice(a=[i for i in range(blockout, 40, 1) if i >= 6]),
+        'width': np.random.choice(a=[i for i in range(blockout, 40, 1) if i >= 6]),
+        'height': np.random.choice(a=list(range(24, 40))),
         'dimension_unit_of_measure': 'IN',
         'weight': np.random.choice(a=list(range(75, 400, 25))+[750]),
         'weight_unit_of_measure': 'LBS',
         'packing': 'PALLET',
         'name': 'Test Package',
-        'stack_limit': int(np.random.choice(a=[1, 2, 3, 4], p=[.2, .3, .3, .2])),
+        'stack_limit': int(np.random.choice(a=[1, 2, 3, 4], p=[0, .1, .7, .2])),
         'desc': None,
         'commodity': None,
         'value': None,
-        'num_pieces': int(np.random.choice(a=list(range(1, 6)))),
+        'num_pieces': 1 if single_piece_only else int(np.random.choice(a=list(range(1, 6)))),
     }
 
 ###########################################
@@ -36,7 +36,6 @@ print('')
 trailer_selection = input('Select a trailer type: ')
 trailer_selection = int(trailer_selection)
 
-# trailer_selection = 0
 trailer_dims = STANDARD_TRAILER_DIMS[trailer_selection]
 
 
@@ -48,16 +47,24 @@ print('')
 num_pieces = input('Select number of pieces: ')
 num_pieces = int(num_pieces)
 
-# num_pieces = 5
 ###########################################
 ######## Generate Shipment Pieces #########
 ###########################################
 
 blockout = trailer_dims.get('blockout_options')[0]
-piece_list = []
+shipment_list = []
 for _ in range(num_pieces):
-    piece_dict = generate_random_piece(blockout) 
-    piece_list += [piece_dict]
+    piece_dict = generate_random_piece(blockout=blockout,single_piece_only=False) 
+    shipment_list += [piece_dict]
+    if sum([s.get('num_pieces') for s in shipment_list]) >= num_pieces:
+        shipment_list[-1].update(
+            {
+                'num_pieces' : num_pieces - sum(
+                    [s.get('num_pieces') for s in shipment_list[:-1]]
+                )
+            }
+        )
+        break
 
 trailer_dims = {
     'inner_width' : trailer_dims.get('inner_width'),
@@ -70,9 +77,27 @@ allow_rotations = True
 
 start_time = time.perf_counter()
 trailer = optimize_trailer_load_plan(
-    piece_list          = piece_list,
-    trailer_dims        = trailer_dims,
-    allow_rotations     = allow_rotations
+    shipment_list = shipment_list,
+    trailer_dims = trailer_dims,
+    allow_rotations = allow_rotations,
+    piece_arrangement_algorithm='GREEDY_STACK',
+    shipment_optimization_ls=[
+        {
+            'algorithm' : 'NO_STACK_BIN_PACK',
+            'max_iter' : None,
+            'timeout' : None,
+        },
+        {
+            'algorithm' : 'SLIDE_BACK',
+            'max_iter' : None,
+            'timeout' : None,
+        },
+        {
+            'algorithm' : 'GREEDY_LOAD',
+            'max_iter' : None,
+            'timeout' : None,
+        },
+    ]
 )
 runtime = time.perf_counter() - start_time
 
@@ -81,14 +106,21 @@ trailer_stats = trailer.get_summary()
 
 print('')
 print('')
-for i,shipment in enumerate(trailer.shipments):
-    shipment._set_dims()
-    print(f'Shipment {i+1}: {shipment.length}"x{shipment.width}"x{shipment.height} - {shipment.weight} Lbs')
-    for j,piece in enumerate(shipment.pieces):
-        print(f'\tPiece {j+1}: {piece.length}"x{piece.width}"x{piece.height} - {piece.weight} Lbs')
+for k,v in trailer_stats.get('load_order').items():
+    print(
+        '{name:30} location: {x:3.0f} x {y:3.0f} x {z:3.0f}    size: {l:3.0f}" x {w:3.0f}" x {h:3.0f}"   weight: {weight:5,.0f} Lbs    {rotated:10}'.format(
+            name=v.get('name'),
+            x=v.get('position')[0],
+            y=v.get('position')[1],
+            z=v.get('position')[2],
+            l=v.get('piece_length'),
+            w=v.get('piece_width'),
+            h=v.get('piece_height'),
+            weight=v.get('piece_weight'),
+            rotated='Rotated' if v.get('piece_is_rotated') else 'Not Rotated',
+        )
+    )
 
 
-
-# print(_json_dumps(trailer_stats,indent=2))
-print(runtime)
+print(f'Runtime: {runtime:.2f}')
 trailer.plot()

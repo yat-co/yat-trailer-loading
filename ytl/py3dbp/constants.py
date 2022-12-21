@@ -1,3 +1,4 @@
+
 class RotationType:
     RT_WHD = 0
     RT_HWD = 1

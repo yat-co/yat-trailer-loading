@@ -1,4 +1,15 @@
 
+'''
+Generic Unility Functions for Conversting between Various Units
+
+Usage is:
+
+    DIMENSION_CONVERTER[<convert from unit : str>][<convert to unit : str>](<from unit value : float>)
+        >> <to unit value : float>
+    DIMENSION_CONVERTER['IN']['FT'](12)
+        >> 1
+    Similar usage for VOLUME_CONVERTER and WEIGHT_CONVERTER
+'''
 
 INCHES_PER_FOOT = 12
 INCHES_PER_METER = 39.3701
