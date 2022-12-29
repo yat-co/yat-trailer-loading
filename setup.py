@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-from ytl import __version__
 from setuptools import setup
 
 install_requires = ['numpy', 'matplotlib', ]
 
 setup(
     name='ytl',
-    version=__version__,
+    version='1.0.1',
     author='Jarod Hart & Robert Goss',
     author_email='jhart@yat.ai',
     packages=[
