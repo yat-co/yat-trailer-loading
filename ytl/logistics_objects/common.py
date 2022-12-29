@@ -1,4 +1,5 @@
 
+from typing import List
 from ..options import (
 	DIMENSION_UNIT_OF_MEASURE_OPTIONS,
 	WEIGHT_UNIT_OF_MEASURE_OPTIONS,
@@ -7,8 +8,49 @@ from ..unit_converters import (
 	DIMENSION_CONVERTER,VOLUME_CONVERTER,WEIGHT_CONVERTER,
 )
 from ..py3dbp import Item
+from .. import options
 import numpy as np
 from matplotlib import pyplot
+
+
+def get_rectangle_plot_lists(ll : List, ur : List, x_padding : float, y_padding : float):
+	'''
+	Helper Function for Plotting Logistics Objects
+
+	Parameters
+	-----------
+	ll : List
+		List or array of length 2 describing the lower-left corner of the box to be plotted
+	ur : List
+		List or array of length 2 describing the upper-right corner of the box to be plotted
+	x_padding : float
+		Padding around the box
+	y_padding : float
+		Padding around the box
+	
+	Returns
+	----------
+	x_list : List
+		List of 5 x values to create plot path for the box
+	y_list : List
+		List of 5 y values to create plot path for the box
+	'''
+	x_list = [
+		ll[0] - x_padding,
+		ur[0] + x_padding,
+		ur[0] + x_padding,
+		ll[0] - x_padding,
+		ll[0] - x_padding
+	]
+	y_list = [
+		ll[1] - y_padding,
+		ll[1] - y_padding,
+		ur[1] + y_padding,
+		ur[1] + y_padding,
+		ll[1] - y_padding
+	]
+	return x_list,y_list
+
 
 class LogisticsObject:
 	'''
@@ -20,9 +62,9 @@ class LogisticsObject:
 	other objects to provide basic measurement and weight functionality.
 	'''
 
-	default_dimension_units = 'IN'
-	default_volume_units = 'CUBIC_FT'
-	default_weight_units = 'LBS'
+	default_dimension_units = options.DimUomInches
+	default_volume_units = options.VolumeUomCubicFeet
+	default_weight_units = options.WeightUomPounds
 
 	def __init__(self,length,height,width,dimension_unit_of_measure,weight,weight_unit_of_measure,**kwargs):
         # Ensure unit of measure are recognized
@@ -158,32 +200,24 @@ class ShippingObject(LogisticsObject):
 		'''
 		Plot the Container in the Length x Width Dimension
 		'''
-		h_padding = kwargs.pop('h_padding',0)
-		v_padding = kwargs.pop('v_padding',0)
-		h_offset = kwargs.pop('h_offset',0)
-		v_offset = kwargs.pop('v_offset',0)
 		boundaries = self.get_boundaries()
-		ll = h_offset + boundaries[:,0]
-		ur = v_offset + boundaries[:,1]
-		pyplot.plot(
-			[ll[0]-h_padding,ur[0]+h_padding,ur[0]+h_padding,ll[0]-h_padding,ll[0]-h_padding],
-			[ll[1]-v_padding,ll[1]-v_padding,ur[1]+v_padding,ur[1]+v_padding,ll[1]-v_padding],
-			**kwargs
+		x_list,y_list = get_rectangle_plot_lists(
+			ll=kwargs.pop('h_offset',0) + boundaries[:,0], 
+			ur=kwargs.pop('v_offset',0) + boundaries[:,1], 
+			x_padding=kwargs.pop('h_padding',0), 
+			y_padding=kwargs.pop('v_padding',0)
 		)
+		pyplot.plot(x_list,y_list,**kwargs)
 
 	def fill(self,*args,**kwargs):
 		'''
 		Fill Plot the Container in the Length x Width Dimension
 		'''
-		h_padding = kwargs.pop('h_padding',0)
-		v_padding = kwargs.pop('v_padding',0)
-		h_offset = kwargs.pop('h_offset',0)
-		v_offset = kwargs.pop('v_offset',0)
 		boundaries = self.get_boundaries()
-		ll = h_offset + boundaries[:,0]
-		ur = v_offset + boundaries[:,1]
-		pyplot.fill(
-			[ll[0]-h_padding,ur[0]+h_padding,ur[0]+h_padding,ll[0]-h_padding,ll[0]-h_padding],
-			[ll[1]-v_padding,ll[1]-v_padding,ur[1]+v_padding,ur[1]+v_padding,ll[1]-v_padding],
-			**kwargs
+		x_list,y_list = get_rectangle_plot_lists(
+			ll=kwargs.pop('h_offset',0) + boundaries[:,0], 
+			ur=kwargs.pop('v_offset',0) + boundaries[:,1], 
+			x_padding=kwargs.pop('h_padding',0), 
+			y_padding=kwargs.pop('v_padding',0)
 		)
+		pyplot.fill(x_list,y_list,**kwargs)

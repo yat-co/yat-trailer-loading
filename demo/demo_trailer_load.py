@@ -1,14 +1,13 @@
-from ytl.standard_logistic_dims import STANDARD_TRAILER_DIMS
-from ytl import optimize_trailer_load_plan
 
+from ytl import optimize_trailer_load_plan, defaults, STANDARD_TRAILER_DIMS
 import numpy as np
 import time
 
 
-def generate_random_piece(blockout,single_piece_only=True):
+def generate_random_piece(single_piece_only=True):
     return {
-        'length': np.random.choice(a=[i for i in range(blockout, 40, 1) if i >= 6]),
-        'width': np.random.choice(a=[i for i in range(blockout, 40, 1) if i >= 6]),
+        'length': np.random.choice(a=[i for i in range(20, 40, 1) if i >= 6]),
+        'width': np.random.choice(a=[i for i in range(20, 40, 1) if i >= 6]),
         'height': np.random.choice(a=list(range(24, 40))),
         'dimension_unit_of_measure': 'IN',
         'weight': np.random.choice(a=list(range(75, 400, 25))+[750]),
@@ -51,10 +50,9 @@ num_pieces = int(num_pieces)
 ######## Generate Shipment Pieces #########
 ###########################################
 
-blockout = trailer_dims.get('blockout_options')[0]
 shipment_list = []
 for _ in range(num_pieces):
-    piece_dict = generate_random_piece(blockout=blockout,single_piece_only=False) 
+    piece_dict = generate_random_piece(single_piece_only=False) 
     shipment_list += [piece_dict]
     if sum([s.get('num_pieces') for s in shipment_list]) >= num_pieces:
         shipment_list[-1].update(
@@ -80,24 +78,8 @@ trailer = optimize_trailer_load_plan(
     shipment_list = shipment_list,
     trailer_dims = trailer_dims,
     allow_rotations = allow_rotations,
-    piece_arrangement_algorithm='GREEDY_STACK',
-    shipment_optimization_ls=[
-        {
-            'algorithm' : 'NO_STACK_BIN_PACK',
-            'max_iter' : None,
-            'timeout' : None,
-        },
-        {
-            'algorithm' : 'SLIDE_BACK',
-            'max_iter' : None,
-            'timeout' : None,
-        },
-        {
-            'algorithm' : 'GREEDY_LOAD',
-            'max_iter' : None,
-            'timeout' : None,
-        },
-    ]
+    piece_arrangement_algorithm=defaults.DEFAULT_PIECE_ARRANGEMENT_ALGORITHM,
+    shipment_optimization_ls=defaults.DEFAULT_SHIPMENT_ARRANGEMENT_ALGORITHM
 )
 runtime = time.perf_counter() - start_time
 

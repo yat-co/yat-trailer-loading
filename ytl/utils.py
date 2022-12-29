@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import List, Dict
 import numpy as np
 
 
@@ -68,6 +68,10 @@ def rotation_matrix(theta : float):
 	theta : float
 		Degrees of rotation in radians
 	
+	Returns
+	--------------
+	rot_matrix
+		3 x 3 rotation matrix - rotation of theta degrees counter-clockwise in the x-y plane (orthogonal to the third dimension)
 	'''
 	return np.array([
 		[np.cos(theta), -np.sin(theta), 0],
@@ -89,7 +93,7 @@ def list_remove(idx : int, allocated : List, available : List):
 	----------
 	None
 	'''
-	_ = pop_value(allocated, idx)
+	allocated.remove(idx)
 	available += [idx]
 
 
@@ -106,29 +110,8 @@ def list_allocate(idx : int, allocated : List, available : List):
 	----------
 	None
 	'''
-	_ = pop_value(available, idx)
+	available.remove(idx)
 	allocated += [idx]
-
-
-def pop_value(L : List[Any], v : Any):
-	'''
-	Remove the First Element from a List Matching the Provided Value
-
-	Parameters
-	--------------
-	L : List[Any]
-		List with a value to be removed
-	v : Any
-		Value to be removed from list
-	
-	Returns
-	--------------
-	None
-	'''
-	for i, vv in enumerate(L):
-		if v == vv:
-			return L.pop(i)
-
 
 def get_current_trailer_configuration(trailer):
 	'''

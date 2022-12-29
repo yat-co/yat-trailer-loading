@@ -1,21 +1,38 @@
 
+PackingUnitPallet = 'PALLET'
+PackingUnitBox = 'BOX'
+
 PACKING_OPTIONS = [
-    ('PALLET', 'Palletized Freight'),
-    ('BOX', 'Box'),
+    (PackingUnitPallet, 'Palletized Freight'),
+    (PackingUnitBox, 'Box'),
 ]
+
+DimUomInches = 'IN'
+DimUomFeet = 'FT'
+DimUomMeter = 'METER'
 
 DIMENSION_UNIT_OF_MEASURE_OPTIONS = [
-    ('IN', 'Inches'),
-    ('FT', 'Feet'),
-    ('METER', 'Meters'),
+    (DimUomInches, 'Inches'),
+    (DimUomFeet, 'Feet'),
+    (DimUomMeter, 'Meters'),
 ]
+
+VolumeUomCubicInches = 'CUBIC_IN'
+VolumeUomCubicFeet = 'CUBIC_FT'
+VolumeUomCubicMeters = 'CUBIC_METER'
 
 VOLUME_UNIT_OF_MEASURE_OPTIONS = [
-    (f'CUBIC_{k}', f'Cubic {v}') for (k, v) in DIMENSION_UNIT_OF_MEASURE_OPTIONS
+    (VolumeUomCubicInches, 'Cubic Inches'),
+    (VolumeUomCubicFeet, 'Cubic Feet'),
+    (VolumeUomCubicMeters, 'Cubic Meters'),
 ]
 
+WeightUomPounds = 'LBS'
+WeightUomKilgrams = 'KG'
+WeightUomGrams = 'G'
+
 WEIGHT_UNIT_OF_MEASURE_OPTIONS = [
-    ('LBS', 'Pound'),
-    ('KG', 'Kilograms'),
-    ('G', 'Grams'),
+    (WeightUomPounds, 'Pound'),
+    (WeightUomKilgrams, 'Kilograms'),
+    (WeightUomGrams, 'Grams'),
 ]

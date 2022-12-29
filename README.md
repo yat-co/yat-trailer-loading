@@ -1,7 +1,7 @@
 # YTL - YAT Trailer Loading Package
 
-Simple package for turning list of freight pieces into expected trailer plan and
-associated metrics nessasary for LTL (Less than Truckload) and Partial planning 
+Simple package for turning list of freight pieces into a trailer plan and
+associated metrics helpful for LTL (Less than Truckload) and Partial planning 
 and pricing.
 
 
@@ -11,8 +11,8 @@ and pricing.
 
 ## Reference
 
-The `py3dbp` bin packing package is from
+Portions of this package make use of an optimization presented by Dube and Kanavalty in the conference papaer cited below.  There is a Python implementation of this algorithm available at `https://pypi.org/project/py3dbp/`, which is a derivative work of a Go implementation available in `https://github.com/bom-d-van/binpacking` (The article by Dube and Kanavalty is also available in this GitHub repository).  The `py3dbp` Python implementation, with minor variations to suite our purposes, is in the `ytl.py3dbp` module of this package and leveraged in portions of the trailer load optimization services.
 
-```https://pypi.org/project/py3dbp/```
-
-```https://github.com/bom-d-van/binpacking```
+```
+E. Dube and L. Kanavalty, "Optimizing Three-Dimensional Bin Packing Through Simulation", Proceedings of the Sixth IASTED International Confernece Modelling, Simulation, and Optimization pp. 1-7, September 11-13, 2006, Gaborone, Botswana.
+```

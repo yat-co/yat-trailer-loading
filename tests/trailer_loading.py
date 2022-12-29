@@ -5,6 +5,7 @@ from ytl import (
     PiecesTooLongForServiceException, NoPiecesException,
 )
 from ytl.standard_logistic_dims import STANDARD_TRAILER_DIMS
+from . import test_params
 
 class TrailerLinearFeetTest(unittest.TestCase):
 	def setUp(self):
@@ -14,7 +15,7 @@ class TrailerLinearFeetTest(unittest.TestCase):
 		pass
 
 	def test_random_packing(self):
-		for _ in range(50):
+		for _ in range(15):
 			trailer, piece_list, allow_rotations = generate_random_trailer_load_plan()
 		
 			self.assertTrue(
@@ -72,41 +73,78 @@ class TrailerLinearFeetTest(unittest.TestCase):
 		assert val, 'Failed to raise "NoPiecesException" exception for optimization with no pieces passed'
 
 	def test_all_overweight_packing(self):
-		for __ in range(15):
-			trailer, piece_list, allow_rotations = generate_random_trailer_load_plan(
-				weight_options=[4000],
+		trailer, piece_list, allow_rotations = generate_random_trailer_load_plan(
+			weight_options=[4000],
+		)
+		trailer_stats = trailer.get_summary()
+
+		num_pieces_in_load_plan = len(trailer_stats.get('load_order'))
+		num_pieces_passed = sum([p.get('num_pieces') for p in piece_list])
+
+		piece_weight_in_load_plan = trailer_stats.get('total_weight')
+		piece_weight_passed = sum(
+			[p.get('weight') * p.get('num_pieces') for p in piece_list]
+		)
+
+		# No pieces lost
+		self.assertTrue(
+			num_pieces_in_load_plan == num_pieces_passed,
+			'Pieces were lost in trailer load optimization'
+		)
+
+		# All weight accounted for
+		self.assertTrue(
+			piece_weight_in_load_plan == piece_weight_passed,
+			'Weight is unaccounted for in the trailer load plan'
+		)
+
+		# Check that disallowing rotations is functioning
+		if not allow_rotations:
+			any_piece_rotated = any(
+				[p.get('piece_is_rotated') for p in trailer_stats.get('load_order').values()]
 			)
-			trailer_stats = trailer.get_summary()
-
-			num_pieces_in_load_plan = len(trailer_stats.get('load_order'))
-			num_pieces_passed = sum([p.get('num_pieces') for p in piece_list])
-
-			piece_weight_in_load_plan = trailer_stats.get('total_weight')
-			piece_weight_passed = sum(
-				[p.get('weight') * p.get('num_pieces') for p in piece_list]
+			self.assertFalse(
+				any_piece_rotated,
+				'Rotated a piece when rotations are not allowed'
 			)
 
-			# No pieces lost
-			self.assertTrue(
-				num_pieces_in_load_plan == num_pieces_passed,
-				'Pieces were lost in trailer load optimization'
-			)
+	def test_all_overweight_packing(self):
+		trailer, piece_list, allow_rotations = generate_random_trailer_load_plan(
+			weight_options=[1800],
+			num_piece_selection_options=[2],
+			overweight_shipment_threshold=1500,
+		)
+		trailer_stats = trailer.get_summary()
 
-			# All weight accounted for
-			self.assertTrue(
-				piece_weight_in_load_plan == piece_weight_passed,
-				'Weight is unaccounted for in the trailer load plan'
-			)
+		num_pieces_in_load_plan = len(trailer_stats.get('load_order'))
+		num_pieces_passed = sum([p.get('num_pieces') for p in piece_list])
 
-			# Check that disallowing rotations is functioning
-			if not allow_rotations:
-				any_piece_rotated = any(
-					[p.get('piece_is_rotated') for p in trailer_stats.get('load_order').values()]
-				)
-				self.assertFalse(
-					any_piece_rotated,
-					'Rotated a piece when rotations are not allowed'
-				)
+		piece_weight_in_load_plan = trailer_stats.get('total_weight')
+		piece_weight_passed = sum(
+			[p.get('weight') * p.get('num_pieces') for p in piece_list]
+		)
+
+		# No pieces lost
+		self.assertTrue(
+			num_pieces_in_load_plan == num_pieces_passed,
+			'Pieces were lost in trailer load optimization'
+		)
+
+		# All weight accounted for
+		self.assertTrue(
+			piece_weight_in_load_plan == piece_weight_passed,
+			'Weight is unaccounted for in the trailer load plan'
+		)
+
+		# Check that disallowing rotations is functioning
+		if not allow_rotations:
+			any_piece_rotated = any(
+				[p.get('piece_is_rotated') for p in trailer_stats.get('load_order').values()]
+			)
+			self.assertFalse(
+				any_piece_rotated,
+				'Rotated a piece when rotations are not allowed'
+			)
 
 	def test_pieces_too_long_packing(self):
 		val = False
@@ -123,90 +161,10 @@ class TrailerLinearFeetTest(unittest.TestCase):
 		assert val, 'Failed to raise "PiecesTooLongForServiceException" exception for piece with length 2000 inches'
 
 	def test_all_default_equipment_types(self):
-		piece_arrangement_algorithm_options = ['NAIVE','GREEDY_STACK']
-		shipment_arrangement_algorithm_options = [
-			[
-				{
-					'algorithm' : 'NAIVE',
-					'max_iter' : None,
-					'timeout' : None,
-				},
-			],
-			[
-				{
-					'algorithm' : 'NAIVE',
-					'max_iter' : 3,
-					'timeout' : 5,
-				},
-			],
-			[
-				{
-					'algorithm' : 'NO_STACK_BIN_PACK',
-					'max_iter' : None,
-					'timeout' : None,
-				},
-			],
-			[
-				{
-					'algorithm' : 'NO_STACK_BIN_PACK',
-					'max_iter' : 3,
-					'timeout' : 5,
-				},
-			],
-			[
-				{
-					'algorithm' : 'GREEDY_LOAD',
-					'max_iter' : None,
-					'timeout' : None,
-				},
-			],
-			[
-				{
-					'algorithm' : 'GREEDY_LOAD',
-					'max_iter' : 3,
-					'timeout' : 5,
-				},
-			],
-			[
-				{
-					'algorithm' : 'NO_STACK_BIN_PACK',
-					'max_iter' : None,
-					'timeout' : None,
-				},
-				{
-					'algorithm' : 'SLIDE_BACK',
-					'max_iter' : None,
-					'timeout' : None,
-				},
-				{
-					'algorithm' : 'GREEDY_LOAD',
-					'max_iter' : None,
-					'timeout' : None,
-				},
-			],
-			[
-				{
-					'algorithm' : 'NO_STACK_BIN_PACK',
-					'max_iter' : 3,
-					'timeout' : 5,
-				},
-				{
-					'algorithm' : 'SLIDE_BACK',
-					'max_iter' : 3,
-					'timeout' : 5,
-				},
-				{
-					'algorithm' : 'GREEDY_LOAD',
-					'max_iter' : 3,
-					'timeout' : 5,
-				},
-			],
-		]
-
 		for i,trailer_dims in enumerate(STANDARD_TRAILER_DIMS):
 			for allow_rotations in [True,False]:
-				for piece_arrangement_algorithm in piece_arrangement_algorithm_options:
-					for shipment_optimization_ls in shipment_arrangement_algorithm_options:
+				for piece_arrangement_algorithm in test_params.PIECE_ARRANGEMENT_ALGORITHM_TEST_OPTIONS:
+					for shipment_optimization_ls in test_params.SHIPMENT_ARRANGEMENT_ALGORITHM_TEST_OPTIONS:
 						trailer, piece_list, allow_rotations = generate_random_trailer_load_plan(
 							trailer_idx_options=[i],
 							num_piece_selection_options=[4],

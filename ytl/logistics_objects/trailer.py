@@ -1,5 +1,5 @@
 
-from .common import LogisticsObject
+from .common import LogisticsObject, get_rectangle_plot_lists
 from .shipment import Shipment
 from ..py3dbp import (
 	Bin,
@@ -9,7 +9,7 @@ from ..unit_converters import (
 	DIMENSION_CONVERTER,VOLUME_CONVERTER,
 )
 from ..utils import intervals_overlap,interval_is_subset
-
+from .. import options
 import numpy as np
 from matplotlib import pyplot
 
@@ -167,65 +167,30 @@ class Trailer(LogisticsObject):
 		'''
 		Plot an Overview of the Trailer Load Plan
 		'''
+		piece_plot_kwargs = {
+			'color' : 'red',
+			'h_padding' : -2,
+			'v_padding' : -2,
+		}
+		shipment_plot_kwargs = {
+			'color' : 'blue',
+			'h_padding' : -1,
+			'v_padding' : 0,
+		}
+
 		ll = self.position
 		ur = [self.length,self.width,self.height]
-		trailer_padding = 3
-		
+		x_list,y_list = get_rectangle_plot_lists(ll=ll,ur=ur,x_padding=3,y_padding=3)
+
 		pyplot.figure(figsize=(self.length/25,self.width/25))
-		pyplot.plot(
-			[
-				ll[0]-trailer_padding,
-				ur[0]+trailer_padding,
-				ur[0]+trailer_padding,
-				ll[0]-trailer_padding,
-				ll[0]-trailer_padding
-			],
-			[
-				ll[1]-trailer_padding,
-				ll[1]-trailer_padding,
-				ur[1]+trailer_padding,
-				ur[1]+trailer_padding,
-				ll[1]-trailer_padding
-			],
-			color='black',
-			linewidth=6
-		)
-		
+		pyplot.plot(x_list,y_list,color='black',linewidth=6)
 		for shipment in self.shipments:
 			s_ll = shipment.position
 			for piece in shipment.pieces:
-				piece.plot(
-					h_offset=s_ll,
-					v_offset=s_ll,
-					h_padding=-2,
-					v_padding=-2,
-					color='red',
-					linewidth=2
-				)
-				piece.fill(
-					h_offset=s_ll,
-					v_offset=s_ll,
-					h_padding=-2,
-					v_padding=-2,
-					color='red',
-					alpha=.2
-				)
-			shipment.plot(
-				h_offset=ll,
-				v_offset=ll,
-				h_padding=-1,
-				v_padding=0,
-				color='blue',
-				linewidth=2
-			)
-			shipment.fill(
-				h_offset=ll,
-				v_offset=ll,
-				h_padding=-1,
-				v_padding=0,
-				color='blue',
-				alpha=.2
-			)
+				piece.plot(h_offset=s_ll,v_offset=s_ll,linewidth=2,**piece_plot_kwargs)
+				piece.fill(h_offset=s_ll,v_offset=s_ll,alpha=.2,**piece_plot_kwargs)
+			shipment.plot(h_offset=ll,v_offset=ll,linewidth=2,**shipment_plot_kwargs)
+			shipment.fill(h_offset=ll,v_offset=ll,alpha=.2,**shipment_plot_kwargs)
 			boundaries = shipment.get_boundaries()
 			x = .5 * boundaries[0,0] + .5 * boundaries[0,1]
 			y = .5 * boundaries[1,0] + .5 * boundaries[1,1]
@@ -245,7 +210,7 @@ class Trailer(LogisticsObject):
 		Get Linear Feet for Trailer Load Plan
 		'''
 		boundaries = self.get_boundaries()
-		return DIMENSION_CONVERTER[self.default_dimension_units]['FT'](boundaries[0,1] - boundaries[0,0])
+		return DIMENSION_CONVERTER[self.default_dimension_units][options.DimUomFeet](boundaries[0,1] - boundaries[0,0])
 
 	def _set_weight(self):
 		'''
@@ -300,7 +265,7 @@ class Trailer(LogisticsObject):
 
 		linear_feet = self.get_linear_feet()
 
-		linear_feet_portion_of_trailer = DIMENSION_CONVERTER['FT'][self.default_dimension_units](linear_feet) / self.length
+		linear_feet_portion_of_trailer = DIMENSION_CONVERTER[options.DimUomFeet][self.default_dimension_units](linear_feet) / self.length
 		actual_cube_portion_of_trailer = actual_cube / self.length / self.width / self.height
 		stacked_cube_portion_of_trailer = stacked_cube / self.length / self.width / self.height
 		trailer_cube_portion_of_trailer = trailer_cube / self.length / self.width / self.height
@@ -313,15 +278,15 @@ class Trailer(LogisticsObject):
 			'trailer_height' : self.height,
 			'arrangement_is_valid' : self.arrangement_is_valid(),
 			'trailer_is_overweight' : self.is_overweight(),
-			'trailer_capacity_cube' : VOLUME_CONVERTER['CUBIC_IN']['CUBIC_FT'](self.length * self.width * self.height),
+			'trailer_capacity_cube' : VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](self.length * self.width * self.height),
 
 			'num_pieces' : num_pieces,
 
 			'total_weight' : self.weight,
 			'linear_feet' : linear_feet,
-			'actual_cube' : VOLUME_CONVERTER['CUBIC_IN']['CUBIC_FT'](actual_cube),
-			'stacked_cube' : VOLUME_CONVERTER['CUBIC_IN']['CUBIC_FT'](stacked_cube),
-			'trailer_cube' : VOLUME_CONVERTER['CUBIC_IN']['CUBIC_FT'](trailer_cube),
+			'actual_cube' : VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](actual_cube),
+			'stacked_cube' : VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](stacked_cube),
+			'trailer_cube' : VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](trailer_cube),
 
 			'weight_portion_of_trailer' : weight_portion_of_trailer,
 			'linear_feet_portion_of_trailer' : linear_feet_portion_of_trailer,
