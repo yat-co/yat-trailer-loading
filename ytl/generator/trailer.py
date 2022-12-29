@@ -1,9 +1,9 @@
-from .. import optimize_trailer_load_plan, optimize_trailer_load_plan_wrapper
-from ..standard_logistic_dims import STANDARD_TRAILER_DIMS
-from .pieces import generate_random_piece
+# from .. import optimize_trailer_load_plan, optimize_trailer_load_plan_wrapper
+# from ..standard_logistic_dims import STANDARD_TRAILER_DIMS
+# from .pieces import generate_random_piece
 
-from copy import deepcopy
-import numpy as np
+# from copy import deepcopy
+# import numpy as np
 
 
 def generate_random_trailer_load_plan(**kwargs):
