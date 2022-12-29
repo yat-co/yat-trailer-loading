@@ -3,7 +3,7 @@
 from ytl import __version__
 from setuptools import setup
 
-install_requires = []
+install_requires = ['numpy',]
 
 setup(
     name='ytl',
