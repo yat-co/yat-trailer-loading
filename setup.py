@@ -2,7 +2,7 @@
 from ytl import __version__
 from setuptools import setup
 
-install_requires = ['numpy',]
+install_requires = ['numpy', 'matplotlib', ]
 
 setup(
     name='ytl',
