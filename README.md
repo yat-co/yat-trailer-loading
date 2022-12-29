@@ -8,9 +8,13 @@ Beyond the standard out-of-the-box style implementation, the package is readily 
 
 ## Install
 
+```
+pip install ytl
+```
+
 ## Usage
 
-### Setup
+### **Setup**
 Import trailer optimization service (this version is intended to support an API)
 ```
 from ytl import optimize_trailer_load_plan_wrapper
@@ -40,7 +44,7 @@ shipment_list = [
 ]
 ```
 
-### Trailer Load Optimization with Pre-Defined Trailer Type
+### **Trailer Load Optimization with Pre-Defined Trailer Type**
 Define request data and call optimization function.  This example sets the equipment type to a typical 53' dry-van trailer and allow shipment pieces to be rotated.
 ```
 request_data = {
@@ -83,7 +87,7 @@ import json
 print(json.dumps(STANDARD_TRAILER_DIMS,indent=2))
 ```
 
-### Trailer Load Optimization with Specified Trailer Dimensions
+### **Trailer Load Optimization with Specified Trailer Dimensions**
 ```
 trailer_dims = {
     "inner_width": 98.5,
@@ -91,13 +95,46 @@ trailer_dims = {
     "inner_height": 108,
     "max_weight": 42500
 }
-
 request_data = {
     'trailer_dims' : trailer_dims,
     'shipment_list' : shipment_list,
     'allow_rotations' : False
 }
 status_code,response_data = optimize_trailer_load_plan_wrapper(request_data=request_data)
+```
+
+### **Trailer Load Optimization with Altered Optimization Parameters**
+You can alter the optimization as well by specifying router keys for the piece and shipment arrangement algorithms.  
+```
+request_data = {
+    'equipment_code' : 'DV_53',
+    'shipment_list' : shipment_list,
+    'allow_rotations' : True,
+    'piece_arrangement_algorithm' : 'NAIVE',
+    'shipment_optimization_ls' : [
+        {
+            'algorithm' : 'GREEDY_LOAD',
+            'max_iter' : 5,
+            'timeout' : 2.5,
+        }
+    ]
+}
+status_code,response_data = optimize_trailer_load_plan_wrapper(request_data=request_data)
+```
+The piece arrangement algorith is a single use optimization that arranges (potentially stacking) pieces into shipments.  The shipment arrangement algorithm is iterative optimization that attempts to find the best way (*best meaning minimal linear feet occupied) of loading those shipments into the trailer.  Since the shipment arrangement is an iterated optimization, you can provide a list of algorithm parameters to use.  See `ytl.optimizer_functions.PIECE_ARRANGEMENT_ROUTER.keys()` for `piece_arrangement_algorithm` options and `ytl.optimizer_functions.SHIPMENT_ARRANGEMENT_ROUTER.keys()` for `algorithm` options in the `shipment_optimization_ls` parameter.  Also see `ytl.defaults.DEFAULT_PIECE_ARRANGEMENT_ALGORITHM` and `ytl.defaults.DEFAULT_SHIPMENT_ARRANGEMENT_ALGORITHM` for default values.
+```
+import ytl
+import json
+
+# Piece arrangement algorithm options
+print(ytl.optimizer_functions.PIECE_ARRANGEMENT_ROUTER.keys())
+# Piece arrangement algorithm default
+print(ytl.defaults.DEFAULT_PIECE_ARRANGEMENT_ALGORITHM)
+
+# Shipment arrangement algorithm options
+print(ytl.optimizer_functions.SHIPMENT_ARRANGEMENT_ROUTER.keys())
+# Shipment arrangement algorithm default
+print(json.dumps(ytl.defaults.DEFAULT_SHIPMENT_ARRANGEMENT_ALGORITHM,indent=2))
 ```
 
 ## Simulation Model Description
