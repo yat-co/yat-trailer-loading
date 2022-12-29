@@ -25,6 +25,7 @@ from ..defaults import (
 	DEFAULT_PIECE_ARRANGEMENT_ALGORITHM,
 	DEFAULT_SHIPMENT_ARRANGEMENT_ALGORITHM,
 )
+from copy import deepcopy
 
 def optimize_trailer_load_plan(shipment_list : List[Dict], trailer_dims : Dict, allow_rotations : bool = True, **kwargs):
 	# Validation of Pieces and Trailer Dimensions
@@ -56,7 +57,7 @@ def optimize_trailer_load_plan(shipment_list : List[Dict], trailer_dims : Dict, 
 	
 	# Create pieces for all provided shipments
 	pieces = []
-	for i, shipment_dict in enumerate(shipment_list):
+	for i, shipment_dict in enumerate(deepcopy(shipment_list)):
 		num_items = shipment_dict.pop('num_pieces', 1)
 		for j in range(num_items):
 			shipment_dict.update(
@@ -67,7 +68,6 @@ def optimize_trailer_load_plan(shipment_list : List[Dict], trailer_dims : Dict, 
 				}
 			)
 			pieces += [Piece(**shipment_dict)]
-	
 	# Identify overweight shipments
 	overweight_pieces = [piece for piece in pieces if piece.weight > overweight_shipment_threshold]
 	pieces = [piece for piece in pieces if not piece in overweight_pieces]

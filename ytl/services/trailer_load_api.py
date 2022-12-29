@@ -13,6 +13,7 @@ from ..exceptions import (
 from ..optimizer_functions import PIECE_ARRANGEMENT_ROUTER, SHIPMENT_ARRANGEMENT_ROUTER
 from ..standard_logistic_dims import STANDARD_TRAILER_DIMS
 from .. import options
+from copy import deepcopy
 import numpy as np
 import json
 
@@ -159,7 +160,7 @@ def optimize_trailer_load_plan_wrapper(request_data : Dict):
 	'''
 	# Parse request data
 	try:
-		request_status_code,parsed_request_data,errors = parse_request_data(request_data=request_data)
+		request_status_code,parsed_request_data,errors = parse_request_data(request_data=deepcopy(request_data))
 		if request_status_code != 200:
 			return request_status_code,errors
 	except:

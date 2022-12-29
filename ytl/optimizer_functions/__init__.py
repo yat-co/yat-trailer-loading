@@ -5,14 +5,11 @@ from .shipment_arrangement.simple_movements import slide_shipments_back
 from .shipment_arrangement.greedy import greedy_trailer_load
 
 from .piece_arrangement.naive import naive_piece_arrangement
-from .piece_arrangement.bin_packing import binpack_stack_pieces
 from .piece_arrangement.greedy import greedy_stack_pieces
 
 
 PIECE_ARRANGEMENT_ROUTER = {
 	'NAIVE': naive_piece_arrangement,
-	# TODO: Address invalid stacking results prior to making this available
-	# 'BIN_PACK_SHIPMENT_STACK': binpack_stack_pieces,
 	'GREEDY_STACK': greedy_stack_pieces,
 }
 
