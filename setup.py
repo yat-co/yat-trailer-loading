@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from ytl import __version__
 from setuptools import setup
 
@@ -11,10 +10,10 @@ setup(
     author='Jarod Hart & Robert Goss',
     author_email='jhart@yat.ai',
     packages=[
-        'ytl', 'ytl.py3dbp', 'ytl.services',
+        'ytl', 'ytl.py3dbp', 'ytl.services', 'ytl.logistics_objects',
         'ytl.optimizer_functions','ytl.optimizer_functions.shipment_arrangement','ytl.optimizer_functions.piece_arrangement',
     ],
-    license="Copyright YAT",
+    license="MIT",
     install_requires=install_requires,
     test_suite="tests",
     classifiers=[
@@ -28,7 +27,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
     ],
-    description='YAT Trailer Loading package',
+    description='YAT Trailer Loading Package',
     long_description=open('README.md').read(),
     zip_safe=True,
 )
