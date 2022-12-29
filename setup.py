@@ -11,7 +11,9 @@ setup(
     author_email='jhart@yat.ai',
     packages=[
         'ytl', 'ytl.py3dbp', 'ytl.services', 'ytl.logistics_objects',
-        'ytl.optimizer_functions','ytl.optimizer_functions.shipment_arrangement','ytl.optimizer_functions.piece_arrangement',
+        'ytl.optimizer_functions',
+        'ytl.optimizer_functions.shipment_arrangement',
+        'ytl.optimizer_functions.piece_arrangement',
     ],
     license="MIT",
     install_requires=install_requires,
