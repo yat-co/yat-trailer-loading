@@ -162,7 +162,7 @@ def greedy_trailer_load(trailer, max_iter : int = None, timeout : float = None, 
 			int(x) for x in np.random.choice(
 				a=len(trailer.shipments),
 				p=prob,
-				size=len(len(trailer.shipments)),
+				size=len(trailer.shipments),
 				replace=False
 			)
 		]
