@@ -278,21 +278,21 @@ class Trailer(LogisticsObject):
 			'trailer_height' : self.height,
 			'arrangement_is_valid' : self.arrangement_is_valid(),
 			'trailer_is_overweight' : self.is_overweight(),
-			'trailer_capacity_cube' : VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](self.length * self.width * self.height),
+			'trailer_capacity_cube' : round(VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](self.length * self.width * self.height),1),
 
 			'num_pieces' : num_pieces,
 
-			'total_weight' : self.weight,
-			'linear_feet' : linear_feet,
-			'actual_cube' : VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](actual_cube),
-			'stacked_cube' : VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](stacked_cube),
-			'trailer_cube' : VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](trailer_cube),
+			'total_weight' : round(self.weight),
+			'linear_feet' : round(linear_feet,2),
+			'actual_cube' : round(VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](actual_cube),1),
+			'stacked_cube' : round(VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](stacked_cube),1),
+			'trailer_cube' : round(VOLUME_CONVERTER[options.VolumeUomCubicInches][options.VolumeUomCubicFeet](trailer_cube),1),
 
-			'weight_portion_of_trailer' : weight_portion_of_trailer,
-			'linear_feet_portion_of_trailer' : linear_feet_portion_of_trailer,
-			'actual_cube_portion_of_trailer' : actual_cube_portion_of_trailer,
-			'stacked_cube_portion_of_trailer' : stacked_cube_portion_of_trailer,
-			'trailer_cube_portion_of_trailer' : trailer_cube_portion_of_trailer,
+			'weight_portion_of_trailer' : round(weight_portion_of_trailer,3),
+			'linear_feet_portion_of_trailer' : round(linear_feet_portion_of_trailer,3),
+			'actual_cube_portion_of_trailer' : round(actual_cube_portion_of_trailer,3),
+			'stacked_cube_portion_of_trailer' : round(stacked_cube_portion_of_trailer,3),
+			'trailer_cube_portion_of_trailer' : round(trailer_cube_portion_of_trailer,3),
 
 			'load_order' : self.get_load_order()
 		}
