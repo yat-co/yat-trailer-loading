@@ -4,6 +4,7 @@ from ...logistics_objects import Shipment
 
 naive_piece_arrangement_details = {
 	'code' : 'NAIVE',
+	'name' : 'Naive Piece Arrangement',
 	'desc' : 'The trivial piece packing - make each piece its own shipment with no stacking',
 }
 

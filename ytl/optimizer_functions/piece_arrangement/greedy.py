@@ -6,6 +6,7 @@ import numpy as np
 
 greedy_stack_piece_arrangement_details = {
 	'code' : 'GREEDY_STACK',
+	'name' : 'Greedy Stacking Piece Arrangement',
 	'desc' : 'Greedy stacking algorithm to stack smaller pieces on top of larger pieces to make shipments',
 }
 

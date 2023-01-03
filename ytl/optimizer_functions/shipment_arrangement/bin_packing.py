@@ -3,6 +3,7 @@ from ...py3dbp import Packer
 
 no_stack_bin_pack_shipment_arrangement_details = {
 	'code' : 'NO_STACK_BIN_PACK',
+	'name' : 'No-Stacking Bin Pack Shipment Arrangement',
 	'desc' : 'Bin packing algorithm with stacking dissallowed to load shipments onto the trailer',
 }
 

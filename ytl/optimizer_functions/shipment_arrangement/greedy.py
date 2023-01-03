@@ -9,6 +9,7 @@ import numpy as np
 
 greedy_shipment_arrangement_details = {
 	'code' : 'GREEDY_LOAD',
+	'name' : 'Greedy Shipment Arrangement',
 	'desc' : 'A stochastic greedy optimization for efficiently loading shipments onto the trailer',
 }
 
