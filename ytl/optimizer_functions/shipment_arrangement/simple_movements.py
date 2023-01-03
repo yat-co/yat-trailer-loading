@@ -2,7 +2,7 @@
 import time
 import numpy as np
 
-naive_shipment_arrangement_details = {
+simple_movement_slide_back_shipment_arrangement_details = {
 	'code' : 'SLIDE_BACK',
 	'desc' : 'Attempt to slide shipments back in the trailer where space is available - Cannot be run stand-alone, intended to be run after `NO_STACK_BIN_PACK`',
 }

@@ -1,8 +1,8 @@
 
 from .shipment_arrangement.naive import naive_shipment_arrangement, naive_shipment_arrangement_details
-from .shipment_arrangement.bin_packing import no_stack_trailer_arrange
-from .shipment_arrangement.simple_movements import slide_shipments_back
-from .shipment_arrangement.greedy import greedy_trailer_load
+from .shipment_arrangement.bin_packing import no_stack_trailer_arrange, no_stack_bin_pack_shipment_arrangement_details
+from .shipment_arrangement.simple_movements import slide_shipments_back, simple_movement_slide_back_shipment_arrangement_details
+from .shipment_arrangement.greedy import greedy_trailer_load, greedy_shipment_arrangement_details
 
 from .piece_arrangement.naive import naive_piece_arrangement, naive_piece_arrangement_details
 from .piece_arrangement.greedy import greedy_stack_pieces, greedy_stack_piece_arrangement_details
@@ -15,9 +15,9 @@ PIECE_ARRANGEMENT_ROUTER = {
 
 SHIPMENT_ARRANGEMENT_ROUTER = {
 	'NAIVE': (naive_shipment_arrangement, naive_shipment_arrangement_details),
-	'NO_STACK_BIN_PACK': (no_stack_trailer_arrange, naive_shipment_arrangement_details),
-	'SLIDE_BACK': (slide_shipments_back, naive_shipment_arrangement_details),
-	'GREEDY_LOAD': (greedy_trailer_load, naive_shipment_arrangement_details),
+	'NO_STACK_BIN_PACK': (no_stack_trailer_arrange, no_stack_bin_pack_shipment_arrangement_details),
+	'SLIDE_BACK': (slide_shipments_back, simple_movement_slide_back_shipment_arrangement_details),
+	'GREEDY_LOAD': (greedy_trailer_load, greedy_shipment_arrangement_details),
 }
 
 def optimize_pieces_arrangement(pieces,algorithm : str,**kwargs):

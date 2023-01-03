@@ -7,7 +7,7 @@ from ...utils import (
 import time
 import numpy as np
 
-naive_shipment_arrangement_details = {
+greedy_shipment_arrangement_details = {
 	'code' : 'GREEDY_LOAD',
 	'desc' : 'A stochastic greedy optimization for efficiently loading shipments onto the trailer',
 }
