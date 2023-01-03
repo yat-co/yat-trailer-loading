@@ -156,10 +156,20 @@ def greedy_trailer_load(trailer, max_iter : int = None, timeout : float = None, 
 	start_time = time.perf_counter()
 	for _ in range(max_iter):
 		random_ls = np.random.choice(a=[0,1,2],size=len(trailer.shipments),replace=True)
+		prob = np.array([get_sort_attr(s,r) for s,r in zip(trailer.shipments,random_ls)])
+		prob = prob / np.sum(prob)
+		index_order = [
+			int(x) for x in np.random.choice(
+				a=len(trailer.shipments),
+				p=prob,
+				size=len(len(trailer.shipments)),
+				replace=False
+			)
+		]
 		loss = tetris_trailer_load(
 			trailer=trailer,
 			allow_rotations=allow_rotations,
-			index_order = np.argsort([get_sort_attr(s,r) for s,r in zip(trailer.shipments,random_ls)])[::-1]
+			index_order = index_order,
 		)
 		if loss < min_loss:
 			shipment_arrangement = get_current_trailer_configuration(trailer)
