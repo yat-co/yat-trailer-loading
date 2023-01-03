@@ -16,12 +16,12 @@ pip install ytl
 
 ### **Setup**
 Import trailer optimization service (this version is intended to support an API)
-```
+```python
 from ytl import optimize_trailer_load_plan_wrapper
 ```
 
 Specify shipment piece list (dimensions assumed to be in inches, weight in pounds).  Packing type must be `PALLET` or `BOX` (pallets are not allowed to be stacked on boxes, even if the pieces involved allow stacking).
-```
+```python
 shipment_list = [
     {
         "length": 40,
@@ -46,7 +46,7 @@ shipment_list = [
 
 ### **Trailer Load Optimization with Pre-Defined Trailer Type**
 Define request data and call optimization function.  This example sets the equipment type to a typical 53' dry-van trailer and allow shipment pieces to be rotated.
-```
+```python
 request_data = {
     'equipment_code' : 'DV_53',
     'shipment_list' : shipment_list,
@@ -54,8 +54,9 @@ request_data = {
 }
 status_code,response_data = optimize_trailer_load_plan_wrapper(request_data=request_data)
 ```
+
 The `status_code` is intended to be the status associated to an API call and the `response_data` is the response body.  You can interogate the response data for a large amount detail about the resulting optimization.  Below are a few examples showing the linear feet occupied in the trailer and a detailed list of the load plan.
-```
+```python
 print('status: {}'.format(status_code))
 print('linear feet: {:.1f} ({:.0f}% of Trailer)'.format(response_data.get('linear_feet'),100*response_data.get('linear_feet_portion_of_trailer')))
 
@@ -80,15 +81,16 @@ for k,v in response_data['load_order'].items():
         )
     )
 ```
+
 The options for predefined equipment types are available in `ytl.STANDARD_TRAILER_DIMS`.  The `code` values are to be used in the optimization function.  The inner length, inner width, inner hieght, and max weight attributes are availalbe there for additional information.  The `inner_height` field for open top trailers is set to be the estimated maximum freight height for typical bridge clearances.
-```
+```python
 from ytl import STANDARD_TRAILER_DIMS
 import json
 print(json.dumps(STANDARD_TRAILER_DIMS,indent=2))
 ```
 
 ### **Trailer Load Optimization with Specified Trailer Dimensions**
-```
+```python
 trailer_dims = {
     "inner_width": 98.5,
     "inner_length": 630,
@@ -105,7 +107,7 @@ status_code,response_data = optimize_trailer_load_plan_wrapper(request_data=requ
 
 ### **Trailer Load Optimization with Altered Optimization Parameters**
 You can alter the optimization as well by specifying router keys for the piece and shipment arrangement algorithms.  
-```
+```python
 request_data = {
     'equipment_code' : 'DV_53',
     'shipment_list' : shipment_list,
@@ -121,18 +123,19 @@ request_data = {
 }
 status_code,response_data = optimize_trailer_load_plan_wrapper(request_data=request_data)
 ```
-The piece arrangement algorith is a single use optimization that arranges (potentially stacking) pieces into shipments.  The shipment arrangement algorithm is iterative optimization that attempts to find the best way (*best meaning minimal linear feet occupied) of loading those shipments into the trailer.  Since the shipment arrangement is an iterated optimization, you can provide a list of algorithm parameters to use.  See `ytl.optimizer_functions.PIECE_ARRANGEMENT_ROUTER.keys()` for `piece_arrangement_algorithm` options and `ytl.optimizer_functions.SHIPMENT_ARRANGEMENT_ROUTER.keys()` for `algorithm` options in the `shipment_optimization_ls` parameter.  Also see `ytl.defaults.DEFAULT_PIECE_ARRANGEMENT_ALGORITHM` and `ytl.defaults.DEFAULT_SHIPMENT_ARRANGEMENT_ALGORITHM` for default values.
-```
+
+The piece arrangement algorith is a single use optimization that arranges (potentially stacking) pieces into shipments.  The shipment arrangement algorithm is iterative optimization that attempts to find the best way (*best meaning minimal linear feet occupied) of loading those shipments into the trailer.  Since the shipment arrangement is an iterated optimization, you can provide a list of algorithm parameters to use.  See `ytl.optimizer_functions.PIECE_ARRANGEMENT_ROUTER` for `piece_arrangement_algorithm` options and `ytl.optimizer_functions.SHIPMENT_ARRANGEMENT_ROUTER` for `algorithm` options in the `shipment_optimization_ls` parameter.  Also see `ytl.defaults.DEFAULT_PIECE_ARRANGEMENT_ALGORITHM` and `ytl.defaults.DEFAULT_SHIPMENT_ARRANGEMENT_ALGORITHM` for default values.
+```python
 import ytl
 import json
 
 # Piece arrangement algorithm options
-print(ytl.optimizer_functions.PIECE_ARRANGEMENT_ROUTER.keys())
+print(json.dumps([b for a,b in ytl.optimizer_functions.PIECE_ARRANGEMENT_ROUTER.values()],indent=2))
 # Piece arrangement algorithm default
 print(ytl.defaults.DEFAULT_PIECE_ARRANGEMENT_ALGORITHM)
 
 # Shipment arrangement algorithm options
-print(ytl.optimizer_functions.SHIPMENT_ARRANGEMENT_ROUTER.keys())
+print(json.dumps([b for a,b in ytl.optimizer_functions.SHIPMENT_ARRANGEMENT_ROUTER.values()],indent=2))
 # Shipment arrangement algorithm default
 print(json.dumps(ytl.defaults.DEFAULT_SHIPMENT_ARRANGEMENT_ALGORITHM,indent=2))
 ```
@@ -163,8 +166,7 @@ For examples of how to generate and work with Piece, Shipment, and Trailer objec
 
 ## Reference
 
-Portions of this package make use of an optimization presented by Dube and Kanavalty in the conference papaer cited below.  There is a Python implementation of this algorithm available at `https://pypi.org/project/py3dbp/`, which is a derivative work of a Go implementation available in `https://github.com/bom-d-van/binpacking` (The article by Dube and Kanavalty is also available in this GitHub repository).  The `py3dbp` Python implementation, with minor variations to suite our purposes, is in the `ytl.py3dbp` module of this package and leveraged in portions of the trailer load optimization services.
+Portions of this package make use of an optimization presented by Dube and Kanavalty in the conference papaer cited below.  There is a Python implementation of this algorithm available on [PyPi](https://pypi.org/project/py3dbp/), which is a derivative work of a Go implementation available on [GitHub](https://github.com/bom-d-van/binpacking) (The article by Dube and Kanavalty is also available in this GitHub repository).  The `py3dbp` Python implementation, with minor variations to suite our purposes, is in the `ytl.py3dbp` module of this package and leveraged in portions of the trailer load optimization services.
 
-```
-E. Dube and L. Kanavalty, "Optimizing Three-Dimensional Bin Packing Through Simulation", Proceedings of the Sixth IASTED International Confernece Modelling, Simulation, and Optimization pp. 1-7, September 11-13, 2006, Gaborone, Botswana.
-```
+> E. Dube and L. Kanavalty, "Optimizing Three-Dimensional Bin Packing Through Simulation", Proceedings of the Sixth IASTED International Confernece Modelling, Simulation, and Optimization pp. 1-7, September 11-13, 2006, Gaborone, Botswana.
+
