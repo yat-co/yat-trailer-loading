@@ -26,3 +26,7 @@ class InvalidTrailerDimensionsException(Exception):
 
 class InvalidPiecesException(Exception):
     pass
+
+
+class InvalidOptimizationResultException(Exception):
+    pass
