@@ -1,23 +1,23 @@
 
-from .shipment_arrangement.naive import naive_shipment_arrangement
+from .shipment_arrangement.naive import naive_shipment_arrangement, naive_shipment_arrangement_details
 from .shipment_arrangement.bin_packing import no_stack_trailer_arrange
 from .shipment_arrangement.simple_movements import slide_shipments_back
 from .shipment_arrangement.greedy import greedy_trailer_load
 
-from .piece_arrangement.naive import naive_piece_arrangement
-from .piece_arrangement.greedy import greedy_stack_pieces
+from .piece_arrangement.naive import naive_piece_arrangement, naive_piece_arrangement_details
+from .piece_arrangement.greedy import greedy_stack_pieces, greedy_stack_piece_arrangement_details
 
 
 PIECE_ARRANGEMENT_ROUTER = {
-	'NAIVE': naive_piece_arrangement,
-	'GREEDY_STACK': greedy_stack_pieces,
+	'NAIVE': (naive_piece_arrangement, naive_piece_arrangement_details),
+	'GREEDY_STACK': (greedy_stack_pieces, greedy_stack_piece_arrangement_details),
 }
 
 SHIPMENT_ARRANGEMENT_ROUTER = {
-	'NAIVE': naive_shipment_arrangement,
-	'NO_STACK_BIN_PACK': no_stack_trailer_arrange,
-	'SLIDE_BACK': slide_shipments_back,
-	'GREEDY_LOAD': greedy_trailer_load,
+	'NAIVE': (naive_shipment_arrangement, naive_shipment_arrangement_details),
+	'NO_STACK_BIN_PACK': (no_stack_trailer_arrange, naive_shipment_arrangement_details),
+	'SLIDE_BACK': (slide_shipments_back, naive_shipment_arrangement_details),
+	'GREEDY_LOAD': (greedy_trailer_load, naive_shipment_arrangement_details),
 }
 
 def optimize_pieces_arrangement(pieces,algorithm : str,**kwargs):
@@ -48,7 +48,7 @@ def optimize_pieces_arrangement(pieces,algorithm : str,**kwargs):
 	'''
 	if not algorithm in PIECE_ARRANGEMENT_ROUTER.keys():
 		raise NotImplementedError(f'Algorithm `{algorithm}` has not been implemented')
-	return PIECE_ARRANGEMENT_ROUTER[algorithm](pieces=pieces,**kwargs)
+	return PIECE_ARRANGEMENT_ROUTER[algorithm][0](pieces=pieces,**kwargs)
 
 
 def optimize_shipment_arrangement(trailer,algorithm,**kwargs):
@@ -75,4 +75,4 @@ def optimize_shipment_arrangement(trailer,algorithm,**kwargs):
 	'''
 	if not algorithm in SHIPMENT_ARRANGEMENT_ROUTER.keys():
 		raise NotImplementedError(f'Algorithm `{algorithm}` has not been implemented')
-	return SHIPMENT_ARRANGEMENT_ROUTER[algorithm](trailer=trailer,**kwargs)
+	return SHIPMENT_ARRANGEMENT_ROUTER[algorithm][0](trailer=trailer,**kwargs)

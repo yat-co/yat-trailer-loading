@@ -7,6 +7,11 @@ from ...utils import (
 import time
 import numpy as np
 
+naive_shipment_arrangement_details = {
+	'code' : 'GREEDY_LOAD',
+	'desc' : 'A stochastic greedy optimization for efficiently loading shipments onto the trailer',
+}
+
 def loss_function(trailer, shipment=None, **kwargs):
 	'''
 	Loss Function Intended to Score Trailer Load Plan Based on Trailer Linear Feet

@@ -2,6 +2,11 @@
 from typing import List
 from ...logistics_objects import Shipment
 
+naive_piece_arrangement_details = {
+	'code' : 'NAIVE',
+	'desc' : 'The trivial piece packing - make each piece its own shipment with no stacking',
+}
+
 def naive_piece_arrangement(pieces : List, **kwargs):
 	'''
 	Allocate Provided Pieces into Shipments in a Trivia/Naive Manner

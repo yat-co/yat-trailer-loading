@@ -1,4 +1,8 @@
 
+naive_shipment_arrangement_details = {
+	'code' : 'NAIVE',
+	'desc' : 'The trivial shipment arrangement - put each shipment in the trailer end to end',
+}
 
 def naive_shipment_arrangement(trailer, **kwargs):
 	'''

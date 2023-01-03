@@ -4,6 +4,11 @@ from ...logistics_objects import Shipment
 from ...utils import list_allocate
 import numpy as np
 
+greedy_stack_piece_arrangement_details = {
+	'code' : 'GREEDY_STACK',
+	'desc' : 'Greedy stacking algorithm to stack smaller pieces on top of larger pieces to make shipments',
+}
+
 def try_to_stack(shipment, idx : int, trailer_height : float, allocated_pieces : List[int], available_pieces : List[int], stackable_pieces : List, allow_rotations : bool=True):
 	'''
 	Try to Stack Piece

@@ -2,6 +2,11 @@
 import time
 import numpy as np
 
+naive_shipment_arrangement_details = {
+	'code' : 'SLIDE_BACK',
+	'desc' : 'Attempt to slide shipments back in the trailer where space is available - Cannot be run stand-alone, intended to be run after `NO_STACK_BIN_PACK`',
+}
+
 def slide_shipments_back(trailer, max_iter : int = None, timeout : float = None, **kwargs):
 	'''
 	Slide Shipment Back in Trailer

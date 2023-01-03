@@ -1,6 +1,11 @@
 
 from ...py3dbp import Packer
 
+naive_shipment_arrangement_details = {
+	'code' : 'NO_STACK_BIN_PACK',
+	'desc' : 'Bin packing algorithm with stacking dissallowed to load shipments onto the trailer',
+}
+
 def no_stack_pack_trailer(trailer, trailer_occupy_length : int, allow_rotations=True):
 	'''
 	Apply Bin Packing Algorithm to Load a Portion of a Trailer
