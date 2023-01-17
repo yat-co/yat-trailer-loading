@@ -1,25 +1,22 @@
 # YTL - YAT Trailer Loading Package
 
-Simple package for turning list of freight pieces into a trailer plan and associated metrics helpful for LTL (Less than Truckload) and Partial planning and pricing.  The package includes an out-of-the-box trailer load optimization allowing for flexible trailer dimension options, allows or disallows stacking/rotating of pieces, and handling of overweight shipments/pieces.  A detailed load plan is returned, as wells as several measurements like linear feet, actual volume, cubed volume, and effective trailer volume occupancy of the load plan.
+Simple package for trailer load plan optimization and associated metrics helpful for LTL (Less than Truckload) and Partial Truckload planning and pricing.  The package includes an out-of-the-box trailer load optimization that allows for flexible trailer dimension options, allows or disallows stacking/rotating of pieces, and handles overweight shipments/pieces.  A detailed load plan is returned, as wells as several measurements like linear feet, actual volume, cubed volume, and effective trailer volume occupancy of the load plan.
 
-The aim of the optimization is to load the provided shipments/pieces into a trailer of the specified dimensions with minimal linear foot occupancy of the trailer.  The default configuration makes it easy to plug and play to use in your own Python development or in an internally hosted API (see accompanying `yat-trailer-loading-api` for a simple Python Flask implementation).
+The aim of the optimization is to load the provided shipments/pieces into a trailer of the specified dimensions with minimal linear foot occupancy of the trailer.  The default configuration makes it easy to plug and play to use in your own Python development or in an internally hosted API (see accompanying [yat-trailer-loading-api](https://github.com/yat-co/yat-trailer-loading-api) for a simple Python Flask implementation).  There is also a publicly available hosted API on [YAT Demo](https://demo.yat.ai) with documentation on [Postman](https://documenter.getpostman.com/view/13715234/2s8ZDVZ3rH).
 
-Beyond the standard out-of-the-box style implementation, the package is readily available for development of additional optimization algorithms.  The optimization in this package is simulation-based, leveraging Python Classes that model Trailers, Shipments, and Pieces as well as the placement and movement of Pieces and Shipments within a Trailer.  For more information on adding your own optimization, see additional details in the `Simulation Model Description` section below.
+Beyond the standard out-of-the-box style implementation, the package is readily available for development of additional optimization algorithms.  The optimization in this package is simulation-based, leveraging Python Classes that model Trailers, Shipments, and Pieces as well as the placement and movement of Pieces and Shipments within a Trailer.  For more information on adding your own optimization, see additional details in the **Simulation Model Description** section below.
 
-## Install
+### Example 
 
-```
+For an example microservice implementation with Flask check out this [repository](https://github.com/yat-co/yat-trailer-loading-api).
+
+Or try out the free API with documentation here [YAT Demo](https://demo.yat.ai) and examples here [Postman](https://documenter.getpostman.com/view/13715234/2s8ZDVZ3rH).
+
+### Setup in Python
+Install the `ytl` package:
+```bash
 pip install ytl
 ```
-
-## Usage
-
-### **Setup**
-Import trailer optimization service (this version is intended to support an API)
-```python
-from ytl import optimize_trailer_load_plan_wrapper
-```
-
 Specify shipment piece list (dimensions assumed to be in inches, weight in pounds).  Packing type must be `PALLET` or `BOX` (pallets are not allowed to be stacked on boxes, even if the pieces involved allow stacking).
 ```python
 shipment_list = [
@@ -44,9 +41,11 @@ shipment_list = [
 ]
 ```
 
-### **Trailer Load Optimization with Pre-Defined Trailer Type**
+### Trailer Load Optimization with Pre-Defined Trailer Type
 Define request data and call optimization function.  This example sets the equipment type to a typical 53' dry-van trailer and allow shipment pieces to be rotated.
 ```python
+from ytl import optimize_trailer_load_plan_wrapper
+
 request_data = {
     'equipment_code' : 'DV_53',
     'shipment_list' : shipment_list,
@@ -89,7 +88,7 @@ import json
 print(json.dumps(STANDARD_TRAILER_DIMS,indent=2))
 ```
 
-### **Trailer Load Optimization with Specified Trailer Dimensions**
+### Trailer Load Optimization with Specified Trailer Dimensions
 ```python
 trailer_dims = {
     "inner_width": 98.5,
@@ -105,7 +104,7 @@ request_data = {
 status_code,response_data = optimize_trailer_load_plan_wrapper(request_data=request_data)
 ```
 
-### **Trailer Load Optimization with Altered Optimization Parameters**
+### Trailer Load Optimization with Altered Optimization Parameters
 You can alter the optimization as well by specifying router keys for the piece and shipment arrangement algorithms.  
 ```python
 request_data = {
@@ -142,6 +141,8 @@ print(json.dumps(ytl.defaults.DEFAULT_SHIPMENT_ARRANGEMENT_ALGORITHM,indent=2))
 
 ## Simulation Model Description
 
+The remainder of this file is intended for those who would like to build off of this package, to make custom trailer loading optimization algorithms using the current package as infrastructure for it.  If you are solely intended to implement a service using out-of-the-box functionality, there is not need to read further.
+
 Given the complexity of the trailer loading optimization problem, we are well-advised to seek approximate optimization approach rather than exact optimization that may be very costly and time-consuming.  This package includes an object-oriented framework for simulation-based optimizers, which can be used as the underpinning for approaches like simulated annealing/MCMC style methods, genetic algorithms, and other heuristic/stochastic/dynamical systems optimization schemes.
 
 The simulation framework is composed of 3 types of objects:  Trailers, Shipments, and Pieces.  
@@ -163,10 +164,3 @@ The optimization is implemented in `ytl.services.trailer_load.optimize_trailer_l
 Further development can be done by adding additional optimizers to `ytl.optimizer_functions.optimize_pieces_arrangement` and/or `ytl.optimizer_functions.optimize_shipment_arrangement`, altering the goal of the optimization by using another loss function instead of linear feet, or altering the valid Piece arrangement methodology inside the Piece/Shipment objects.
 
 For examples of how to generate and work with Piece, Shipment, and Trailer objects, start with `demo/demo_trailer_load.py` and `ytl.services.trailer_load.optimize_trailer_load_plan`.  
-
-## Reference
-
-Portions of this package make use of an optimization presented by Dube and Kanavalty in the conference papaer cited below.  There is a Python implementation of this algorithm available on [PyPi](https://pypi.org/project/py3dbp/), which is a derivative work of a Go implementation available on [GitHub](https://github.com/bom-d-van/binpacking) (The article by Dube and Kanavalty is also available in this GitHub repository).  The `py3dbp` Python implementation, with minor variations to suite our purposes, is in the `ytl.py3dbp` module of this package and leveraged in portions of the trailer load optimization services.
-
-> E. Dube and L. Kanavalty, "Optimizing Three-Dimensional Bin Packing Through Simulation", Proceedings of the Sixth IASTED International Confernece Modelling, Simulation, and Optimization pp. 1-7, September 11-13, 2006, Gaborone, Botswana.
-
