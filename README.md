@@ -164,4 +164,3 @@ The optimization is implemented in `ytl.services.trailer_load.optimize_trailer_l
 Further development can be done by adding additional optimizers to `ytl.optimizer_functions.optimize_pieces_arrangement` and/or `ytl.optimizer_functions.optimize_shipment_arrangement`, altering the goal of the optimization by using another loss function instead of linear feet, or altering the valid Piece arrangement methodology inside the Piece/Shipment objects.
 
 For examples of how to generate and work with Piece, Shipment, and Trailer objects, start with `demo/demo_trailer_load.py` and `ytl.services.trailer_load.optimize_trailer_load_plan`.  
-

@@ -1,2 +1,3 @@
 
 from .trailer_load import optimize_trailer_load_plan
+from .trailer_load_api import optimize_trailer_load_plan_wrapper
